@@ -1,42 +1,54 @@
 
-/**
- * loads and decorates the footer
- * @param {Element} block The footer block element
- */
-export default async function decorate(block) {
-  /*
-  const cfg = readBlockConfig(block);
-  console.log(cfg)
-  block.textContent = '';
-
-  // fetch footer content
-  const footerPath = cfg.footer || '/footer';
-  const resp = await fetch(`${footerPath}.plain.html`, window.location.pathname.endsWith('/footer') ? { cache: 'reload' } : {});
-
-  if (resp.ok) {
-    const html = await resp.text();
-
-    // decorate footer DOM
-    const footer = document.createElement('div');
-    footer.innerHTML = html;
-
-    decorateIcons(footer);
-    block.append(footer);
+class NotFoundDialog extends HTMLElement {
+  constructor() {
+    super();
+    this.render();
   }
-  // */
+
+  static get observedAttributes() {
+    return ['title', 'message'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(`Value changed from ${oldValue} to ${newValue}`);
+    this.render();
+  }
+
+  get title() {
+    return this.getAttribute("title") || '';
+  }
+
+  get message() {
+    return this.getAttribute("message") || '';
+  }
+
+  render() {
+    const title = this.title;
+    const message = this.message;
+    const values = {
+      title,
+      message,
+    }
+    console.log(values);
+    const basePath = window?.hlx?.codeBasePath || '/src'
+    fetch(`${basePath}/components/custom/not-found/not-found.html`, { cache: 'reload' })
+      .then(response => {
+        return response.text();
+      })
+      .then(markup => {
+        this.innerHTML = Object.keys(values).reduce((acc, key) => {
+          const value = values[key];
+          const re = new RegExp(`\\$${key}`, 'g');
+          return acc.replace(re, value);
+        }, markup);
+      })
+      ;
+  }
 }
 
-class NotFoundDialog extends HTMLElement {
-    constructor() {
-      super();
-      this.appendChild()
-    }
+// title="title" message="sample text"
 
-    loadData() {
-        const basePath = window?.hlx?.codeBasePath || '/src' 
-        fetch(`${basePath}/components/custom/not-found.html`, { cache: 'reload' })
-    }
-  }
-
-customElements.define("not-found-dialogt", NotFoundDialog, { extends: "p" });
+export default async function prepareComponent() {
+  customElements.define("not-found-dialog", NotFoundDialog);
+}
 

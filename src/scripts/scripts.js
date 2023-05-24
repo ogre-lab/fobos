@@ -12,6 +12,7 @@ import {
   loadBlocks,
   loadCSS,
 } from './lib-franklin.js';
+import { prepareComponent } from '../components/custom/not-found/not-found.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 
@@ -122,6 +123,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  prepareComponent();
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
