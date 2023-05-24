@@ -48,7 +48,11 @@ class NotFoundDialog extends HTMLElement {
 
 // title="title" message="sample text"
 
-export default async function prepareComponent() {
+export async function prepareComponent() {
   customElements.define("not-found-dialog", NotFoundDialog);
 }
+
+export default {
+  prepareComponent,
+};
 
