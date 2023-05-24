@@ -399,13 +399,14 @@ export async function loadBlock(block) {
     block.dataset.blockStatus = 'loading';
     const { blockName } = block.dataset;
     try {
+      const blockPath = `${window.hlx.codeBasePath}/components/blocks/${blockName}/${blockName}`;
       const cssLoaded = new Promise((resolve) => {
-        loadCSS(`${window.hlx.codeBasePath}/components/blocks/${blockName}/${blockName}.css`, resolve);
+        loadCSS(`${blockPath}.css`, resolve);
       });
       const decorationComplete = new Promise((resolve) => {
         (async () => {
           try {
-            const mod = await import(`../components/blocks/${blockName}/${blockName}.js`);
+            const mod = await import(`${blockPath}.js`);
             if (mod.default) {
               await mod.default(block);
             }
