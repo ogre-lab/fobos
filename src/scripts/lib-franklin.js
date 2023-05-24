@@ -251,7 +251,9 @@ export function decorateBlock(block) {
  */
 export function readBlockConfig(block) {
   const config = {};
-  block.querySelectorAll(':scope > div').forEach((row) => {
+  const divs = block.querySelectorAll(':scope > div');
+  debugger
+  divs.forEach((row) => {
     if (row.children) {
       const cols = [...row.children];
       if (cols[1]) {
@@ -405,14 +407,21 @@ export async function loadBlock(block) {
       });
       const decorationComplete = new Promise((resolve) => {
         (async () => {
+          const jsPath = `${blockPath}.js`;
           try {
-            const mod = await import(`${blockPath}.js`);
+            if (blockName === 'footer') {
+              // debugger
+            }
+            const mod = await import(jsPath).catch(reason => {
+              console.log(reason);
+              throw reason;
+            });
             if (mod.default) {
               await mod.default(block);
             }
           } catch (error) {
             // eslint-disable-next-line no-console
-            console.log(`failed to load module for ${blockName}`, error);
+            console.log(`failed to load module for "${blockName}" from ${jsPath}`, error);
           }
           resolve();
         })();
@@ -420,7 +429,7 @@ export async function loadBlock(block) {
       await Promise.all([cssLoaded, decorationComplete]);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(`failed to load block ${blockName}`, error);
+      console.log(`failed to load block "${blockName}"`, error);
     }
     block.dataset.blockStatus = 'loaded';
   }
