@@ -6,11 +6,10 @@ class NotFoundDialog extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['title', 'message'];
+    return ['title', 'message', 'target'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    console.log(`Value changed from ${oldValue} to ${newValue}`);
     this.render();
   }
 
@@ -22,14 +21,19 @@ class NotFoundDialog extends HTMLElement {
     return this.getAttribute("message") || '';
   }
 
+  get target() {
+    return this.getAttribute("target") || '';
+  }
+
   render() {
     const title = this.title;
     const message = this.message;
+    const target = this.target;
     const values = {
       title,
       message,
+      target,
     }
-    console.log(values);
     const basePath = window?.hlx?.codeBasePath || '/src'
     fetch(`${basePath}/components/custom/not-found/not-found.html`, { cache: 'reload' })
       .then(response => {
